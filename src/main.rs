@@ -12,13 +12,14 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let path = &args[1];
     let mut file = File::open(path).unwrap();
-    let mut buf: Vec<u8> = Vec::with_capacity(MAX_SIZE);
-    file.read_to_end(&mut buf).unwrap();
-    if buf.len() > MAX_SIZE {
+    let mut buf: Vec<u8> = Vec::new();
+    let size = file.read_to_end(&mut buf).unwrap();
+    println!("File size: {} ({} bits)", size, size * 8);
+    if size > MAX_SIZE {
         panic!("Your data does not fit in a QR code.");
     }
 
-    let qr = QrCode::encode_binary(&buf, QrCodeEcc::Medium).unwrap();
+    let qr = QrCode::encode_binary(&buf, QrCodeEcc::Low).unwrap();
     println!("{}", qr.size());
 
     let writepath = &args[2];
