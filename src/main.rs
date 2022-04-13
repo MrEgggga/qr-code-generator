@@ -6,12 +6,17 @@ use std::io::{Read, BufWriter};
 use std::fs::File;
 use std::env;
 
+const MAX_SIZE: usize = 2953;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let path = &args[1];
     let mut file = File::open(path).unwrap();
-    let mut buf: Vec<u8> = Vec::new();
+    let mut buf: Vec<u8> = Vec::with_capacity(MAX_SIZE);
     file.read_to_end(&mut buf).unwrap();
+    if buf.len() > MAX_SIZE {
+        panic!("Your data does not fit in a QR code.");
+    }
 
     let qr = QrCode::encode_binary(&buf, QrCodeEcc::Medium).unwrap();
     println!("{}", qr.size());
